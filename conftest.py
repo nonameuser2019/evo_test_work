@@ -47,16 +47,10 @@ def log_in(browser):
 
 
 @pytest.fixture
-def log_in_delete_all_favorites(browser):
-    page = BasePage(browser, MainPageLocators.MAIN_URL)
-    page.open()
-    page.click_button(*BasePageLocators.sign_in_link)
-    page.click_button(*SignInLocators.sign_in_by_email)
-    page.filling_input(*SignInLocators.email_input, 'zhe.depotop@gmail.com')
-    page.click_button(*SignInLocators.sign_form_next_btn)
-    page.filling_input(*SignInLocators.pass_input, 'Pro33160900')
-    page.click_button(*SignInLocators.sabmit_btn)
+def log_in_delete_all_favorites(log_in):
+    page = log_in
     page.click_button(*MainPageLocators.favorites_btn)
     page.delete_all_fav(*FavoritePageLocators.delete_btn)
+    return page
 
 
