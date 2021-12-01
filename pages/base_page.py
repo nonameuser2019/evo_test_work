@@ -14,6 +14,11 @@ class BasePage:
     def open(self):
         self.browser.get(self.url)
 
+    def add_to_fav(self, how, what):
+        self.browser.find_element(how, what)
+        self.browser.click()
+
+
     def move(self, url):
         self.browser.get(url)
 
@@ -68,3 +73,6 @@ class BasePage:
 
     def go_to_faforites(self):
         self.browser.get('https://my.prom.ua/cabinet/user/favorites')
+
+    def go_to_product_page(self, how, what):
+        self.browser.click(how, what)

@@ -18,7 +18,7 @@ PRODUCT_CARD_URL = 'https://prom.ua/p608430629-pokrishka-schwalbe-thunder.html?'
 def test_check_possibility_to_add_to_fav_from_catalog(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
     data = page.get_data_element(*CatalogLocators.favorits_btn, 'data-tg-clicked')
     assert data == 'off', "Pictogram doesn't change style"
 
@@ -27,7 +27,7 @@ def test_check_possibility_to_add_to_fav_from_catalog(browser, log_in_delete_all
 def test_check_favorites_count_before_added_from_catalog(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
     fav_count = page.get_favorites_count(*CatalogLocators.favorites_count)
     assert fav_count == 1, f'Wrong favorites count. Expected result: 1. Actual result: {fav_count}'
 
@@ -35,17 +35,17 @@ def test_check_favorites_count_before_added_from_catalog(browser, log_in_delete_
 def test_check_pict_color_after_reload_page(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
-    data = page.get_data_element(*CatalogLocators.favorits_btn, 'data-tg-clicked')
+    page.add_to_fav(*CatalogLocators.favorits_btn)
     page.reload_page()
+    data = page.get_data_element(*CatalogLocators.favorits_btn, 'data-tg-clicked')
     assert data == 'off', "Pictogram doesn't change style"
 
 
 def test_check_pict_color_in_product_card(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
-    page.click_button(*CatalogLocators.product_link)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
+    page.go_to_product_page(*CatalogLocators.product_link)
     data = page.get_data_element(*CatalogLocators.favorits_btn, 'data-tg-clicked')
     assert data == 'off', "Pictogram doesn't change style"
 
@@ -53,8 +53,8 @@ def test_check_pict_color_in_product_card(browser, log_in_delete_all_favorites):
 def test_check_pict_before_go_back_from_card(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
-    page.click_button(*CatalogLocators.product_link)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
+    page.go_to_product_page(*CatalogLocators.product_link)
     page.go_back()
     data = page.get_data_element(*CatalogLocators.favorits_btn, 'data-tg-clicked')
     assert data == 'off', "Pictogram doesn't change style"
@@ -63,8 +63,8 @@ def test_check_pict_before_go_back_from_card(browser, log_in_delete_all_favorite
 def test_check_fav_count_in_prod_card(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
-    page.click_button(*CatalogLocators.product_link)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
+    page.go_to_product_page(*CatalogLocators.product_link)
     try:
         fav_count = page.get_favorites_count(*CatalogLocators.favorites_count)
         assert fav_count == 1, f'Wrong favorites count. Expected result: 1. Actual result: {fav_count}'
@@ -85,30 +85,16 @@ def test_comparing_product_name_in_favorites_page(browser, log_in_delete_all_fav
 def test_check_fav_count_in_fav_pages(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
-    page.click_button(*CatalogLocators.fav_cabinet_btn)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
+    page.go_to_faforites()
     fav_count = page.get_favorites_count(*FavoritePageLocators.favorites_count)
     assert fav_count == 1, f'Wrong favorites count. Expected result: 1. Actual result: {fav_count}'
-
-
-# doesn't work. To do later
-def test_check_come_back_from_fav_page(browser, log_in_delete_all_favorites):
-    page = BasePage(browser, BIKES_TIRES_ULR)
-    page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
-    current_url = page.get_current_url()
-    page.go_to_faforites()
-    time.sleep(2)
-    page.go_back()
-    go_back_url = page.get_current_url()
-    time.sleep(2)
-    assert current_url == go_back_url, 'Wrong page after come back from favorites page'
 
 
 def test_check_pict_after_del_from_fav_page(browser, log_in_delete_all_favorites):
     page = BasePage(browser, BIKES_TIRES_ULR)
     page.open()
-    page.click_button(*CatalogLocators.favorits_btn)
+    page.add_to_fav(*CatalogLocators.favorits_btn)
     page.go_to_faforites()
     page.delete_all_fav(*FavoritePageLocators.delete_btn)
     count = page.is_not_element_present(*FavoritePageLocators.favorites_count)
@@ -119,7 +105,7 @@ def test_check_pict_after_del_from_fav_page(browser, log_in_delete_all_favorites
 def test_check_pict_style_before_added(browser, log_in_delete_all_favorites):
     page = ProductCardPage(browser, PRODUCT_CARD_URL)
     page.open()
-    page.click_button(*ProductPageLocators.favorits_btn)
+    page.add_to_fav(*ProductPageLocators.favorits_btn)
     data = page.get_data_element(*ProductPageLocators.favorits_btn, 'data-tg-clicked')
     assert data == 'off', "Pictogram doesn't change style"
 
@@ -128,7 +114,7 @@ def test_check_pict_style_before_added(browser, log_in_delete_all_favorites):
 def test_check_fav_count_before_added(browser, log_in_delete_all_favorites):
     page = ProductCardPage(browser, PRODUCT_CARD_URL)
     page.open()
-    page.click_button(*ProductPageLocators.favorits_btn)
+    page.add_to_fav(*ProductPageLocators.favorits_btn)
     count = page.get_favorites_count(*ProductPageLocators.favorites_count)
     assert count == 1, f'Wrong favorites count. Expected result: 1. Actual result: {count}'
 
