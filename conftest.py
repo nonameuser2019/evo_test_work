@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -19,7 +21,7 @@ def browser(request):
         options = Options()
         #options.headless = True
         browser = webdriver.Chrome(options=options)
-        browser.set_window_size(1920, 1080)
+        browser.maximize_window()
         browser.implicitly_wait(5)
     elif browser_name == 'firefox':
         print(' \nStart browser firefox for test')
@@ -29,6 +31,9 @@ def browser(request):
     else:
         raise pytest.UsageError('--browser_name should be chrome or firefox')
     yield browser
+    if sys.exc_info()[0]:
+        test_name = __name__
+        browser.save_screenshot(f'screenshots/{test_name}.png')
     print('\nBroser closed for test')
     browser.quit()
 
@@ -52,5 +57,4 @@ def log_in_delete_all_favorites(log_in):
     page.click_button(*MainPageLocators.favorites_btn)
     page.delete_all_fav(*FavoritePageLocators.delete_btn)
     return page
-
 

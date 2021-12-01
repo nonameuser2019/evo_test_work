@@ -5,8 +5,7 @@ from pages.locators import *
 from pages.base_page import BasePage
 from pages.product_card_page import ProductCardPage
 import time
-import json
-from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
+from utils.support import *
 
 
 BIKES_TIRES_ULR = 'https://prom.ua/Velosipednye-shiny'
@@ -20,7 +19,7 @@ def test_check_possibility_to_add_to_fav_from_catalog(browser, log_in_delete_all
     page.open()
     page.add_to_fav(*CatalogLocators.favorits_btn)
     data = page.get_data_element(*CatalogLocators.favorits_btn, 'data-tg-clicked')
-    assert data == 'off', "Pictogram doesn't change style"
+    assert data == 'on', "Pictogram doesn't change style"
 
 
 @pytest.mark.smoke
@@ -79,7 +78,7 @@ def test_comparing_product_name_in_favorites_page(browser, log_in_delete_all_fav
     product_tile = page.get_text_from_param(*CatalogLocators.product_title, 'title')
     page.click_button(*CatalogLocators.fav_cabinet_btn)
     product_tile_fav = page.get_text_element(*FavoritePageLocators.product_tile)
-    assert product_tile_fav != product_tile, 'Wrong product title in favorites page'
+    assert product_tile_fav == product_tile, 'Wrong product title in favorites page'
 
 
 def test_check_fav_count_in_fav_pages(browser, log_in_delete_all_favorites):
@@ -102,6 +101,7 @@ def test_check_pict_after_del_from_fav_page(browser, log_in_delete_all_favorites
 
 
 # all tests for product card page
+@pytest.mark.smoke
 def test_check_pict_style_before_added(browser, log_in_delete_all_favorites):
     page = ProductCardPage(browser, PRODUCT_CARD_URL)
     page.open()
@@ -110,7 +110,7 @@ def test_check_pict_style_before_added(browser, log_in_delete_all_favorites):
     assert data == 'off', "Pictogram doesn't change style"
 
 
-@pytest.mark.test
+@pytest.mark.smoke
 def test_check_fav_count_before_added(browser, log_in_delete_all_favorites):
     page = ProductCardPage(browser, PRODUCT_CARD_URL)
     page.open()
@@ -118,3 +118,23 @@ def test_check_fav_count_before_added(browser, log_in_delete_all_favorites):
     count = page.get_favorites_count(*ProductPageLocators.favorites_count)
     assert count == 1, f'Wrong favorites count. Expected result: 1. Actual result: {count}'
 
+
+def test_check_fav_count_before_deleted(browser, log_in_delete_all_favorites):
+    page = ProductCardPage(browser, PRODUCT_CARD_URL)
+    page.open()
+    page.add_to_fav(*ProductPageLocators.favorits_btn)
+    page.dell_from_fav(*ProductPageLocators.favorits_btn)
+    count = page.is_not_element_present(*ProductPageLocators.favorites_count)
+    assert count is False, 'Favorites count error, element is present before deleted'
+
+
+@pytest.mark.test
+@pytest.mark.parametrize('url, result', product_card_url_list)
+def test_check_pict_style_before_deleted(browser, log_in_delete_all_favorites, url, result):
+    page = ProductCardPage(browser, url)
+    page.open()
+    page.add_to_fav(*ProductPageLocators.favorits_btn)
+    page.dell_from_fav(*ProductPageLocators.favorits_btn)
+    data = page.get_data_element(*ProductPageLocators.favorits_btn, 'data-tg-clicked')
+    time.sleep(2)
+    assert data == result, "Pictogram doesn't change style"

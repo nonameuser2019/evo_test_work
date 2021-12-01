@@ -1,6 +1,5 @@
 import json
 from selenium import webdriver
-from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -15,9 +14,12 @@ class BasePage:
         self.browser.get(self.url)
 
     def add_to_fav(self, how, what):
-        self.browser.find_element(how, what)
-        self.browser.click()
+        fav_btn = self.browser.find_element(how, what)
+        fav_btn.click()
 
+    def dell_from_fav(self, how, what):
+        fav_btn = self.browser.find_element(how, what)
+        fav_btn.click()
 
     def move(self, url):
         self.browser.get(url)
@@ -25,9 +27,9 @@ class BasePage:
     def is_not_element_present(self, how, what):
         try:
             self.browser.find_element(how, what)
-            element = WebDriverWait(self.browser, 3).until_not(EC.presence_of_element_located((how, what)))
+            element = WebDriverWait(self.browser, 3).until(EC.presence_of_element_located((how, what)))
             return element
-        finally:
+        except:
             return False
 
     def click_button(self, how, what):
@@ -75,4 +77,5 @@ class BasePage:
         self.browser.get('https://my.prom.ua/cabinet/user/favorites')
 
     def go_to_product_page(self, how, what):
-        self.browser.click(how, what)
+        link = self.browser.find_element(how, what)
+        link.click()
